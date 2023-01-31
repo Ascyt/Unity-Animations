@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -193,7 +194,10 @@ public class AnimationPlayer : MonoBehaviour
 
             values.rotations.Add(anim.obj.transform.eulerAngles.z);
             if (anim.colors.Length > 0)
-                values.colors.Add(anim.obj.GetComponent<SpriteRenderer>().color);
+            {
+                SpriteRenderer sr;
+                values.colors.Add(anim.obj.TryGetComponent(out sr) ? sr.color : anim.obj.GetComponent<TextMeshPro>().color);
+            }
 
             lastValues.Insert(0, new Value(values));
         }
@@ -264,7 +268,14 @@ public class AnimationPlayer : MonoBehaviour
                 anim.obj.transform.rotation = Quaternion.Euler(anim.obj.transform.eulerAngles.x, anim.obj.transform.eulerAngles.y, LerpBetweenClosest(values.rotations, t));
 
             if (anim.colors.Length > 0)
-                anim.obj.GetComponent<SpriteRenderer>().color = LerpBetweenClosest(values.colors, t);
+            {
+                Color c = LerpBetweenClosest(values.colors, t);
+                SpriteRenderer sr;
+                if (anim.obj.TryGetComponent(out sr))
+                    sr.color = c;
+                else
+                    anim.obj.GetComponent<TextMeshPro>().color = c;
+            }
 
             if (anim.animationFloat != null)
                 anim.animationFloat.value = LerpBetweenClosest(values.animFloats, t);
