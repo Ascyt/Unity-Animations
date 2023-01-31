@@ -203,10 +203,10 @@ public class AnimationPlayer : MonoBehaviour
             Translation t = anim.translations[i];
 
             values.translations.Add(t.obj == null ?
-            (t.relative ? anim.obj.transform.position + (Vector3)t.vector : (Vector3)t.vector) :
+            (t.relative ? anim.obj.transform.position + (Vector3)t.vector : ((Vector3)t.vector + new Vector3(0, 0, anim.obj.transform.position.z))) :
             MultiplyVector((Vector3)t.vector + new Vector3(0, 0, 1), (t.obj.transform.localScale / 2f) + (anim.obj.transform.localScale / 2f * (t.relative ? -1 : 1))));
         }
-        AddToList(values.scales, ToVector3Array(anim.scales));
+        AddToList(values.scales, ToVector3Array(anim.scales, anim.obj.transform.localScale.z));
         AddToList(values.rotations, anim.rotations);
         AddToList(values.colors, anim.colors);
         AddToList(values.animFloats, anim.animationFloatKeyframes);
@@ -256,11 +256,11 @@ public class AnimationPlayer : MonoBehaviour
     /// <summary>
     /// Converts a Vector2[] to a Vector3[]
     /// </summary>
-    private static Vector3[] ToVector3Array(Vector2[] v)
+    private static Vector3[] ToVector3Array(Vector2[] v, float z)
     {
         Vector3[] result = new Vector3[v.Length];
         for (int i = 0; i < v.Length; i++)
-            result[i] = new Vector3(v[i].x, v[i].y, 0);
+            result[i] = new Vector3(v[i].x, v[i].y, z);
         return result;
     }
 
