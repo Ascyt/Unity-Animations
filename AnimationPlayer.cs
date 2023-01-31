@@ -52,7 +52,15 @@ public class AnimationPlayer : MonoBehaviour
 
     private static List<Value> lastValues = new List<Value>();
 
-    void Update()
+    private void Start()
+    {
+        for (int i = 0; i < step; i++)
+        {
+            PlayStep(steps[i], 0);
+        }
+    }
+
+    private void Update()
     {
         stopAnim = false;
 
