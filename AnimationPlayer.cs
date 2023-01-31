@@ -179,7 +179,10 @@ public class AnimationPlayer : MonoBehaviour
         if (speed >= 0)
         {
             values.translations.Add(anim.obj.transform.position);
-            values.scales.Add(anim.obj.transform.localScale);
+
+            Camera camera;
+            values.scales.Add(anim.obj.TryGetComponent(out camera) ? (Vector3)(Vector2.one * camera.orthographicSize) : anim.obj.transform.localScale);
+
             values.rotations.Add(anim.obj.transform.eulerAngles.z);
             if (anim.colors.Length > 0)
                 values.colors.Add(anim.obj.GetComponent<SpriteRenderer>().color);
@@ -240,7 +243,13 @@ public class AnimationPlayer : MonoBehaviour
                 anim.obj.transform.position = LerpBetweenClosest(values.translations, t);
 
             if (anim.scales.Length > 0)
-                anim.obj.transform.localScale = LerpBetweenClosest(values.scales, t);
+            {
+                Camera camera;
+                if (anim.obj.TryGetComponent(out camera))
+                    camera.orthographicSize = LerpBetweenClosest(values.scales, t).x;
+                else 
+                    anim.obj.transform.localScale = LerpBetweenClosest(values.scales, t);
+            }
 
             if (anim.rotations.Length > 0)
                 anim.obj.transform.rotation = Quaternion.Euler(anim.obj.transform.eulerAngles.x, anim.obj.transform.eulerAngles.y, LerpBetweenClosest(values.rotations, t));

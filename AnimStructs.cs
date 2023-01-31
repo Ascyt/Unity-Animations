@@ -24,7 +24,8 @@ public struct Anim
 
     [Tooltip("Specifies how the object should be moved")]
     public Translation[] translations;
-    [Tooltip("Changes the size (localScale) of the object")]
+    [Tooltip("Changes the size (localScale) of the object.\n" +
+        "For Camera: Sets orthographicSize to x.")]
     public Vector2[] scales;
     [Tooltip("Changes the z rotation of the object")]
     public float[] rotations;
