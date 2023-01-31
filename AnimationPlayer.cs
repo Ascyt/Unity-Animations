@@ -55,7 +55,7 @@ public class AnimationPlayer : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < step; i++)
+        for (int i = 0; i <= step; i++)
         {
             PlayStep(steps[i], 0);
         }
