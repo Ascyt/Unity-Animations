@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class AnimationPlayer : MonoBehaviour
 {
@@ -20,6 +19,8 @@ public class AnimationPlayer : MonoBehaviour
 
     [Tooltip("Specifies the speed the animations should be played at. 1 for normal speed, 0 to turn animations off.")]
     public float speed;
+
+    public Vector2 cameraScale;
 
     [Space]
 
@@ -195,8 +196,7 @@ public class AnimationPlayer : MonoBehaviour
             values.rotations.Add(anim.obj.transform.eulerAngles.z);
             if (anim.colors.Length > 0)
             {
-                SpriteRenderer sr;
-                values.colors.Add(anim.obj.TryGetComponent(out sr) ? sr.color : anim.obj.GetComponent<TextMeshPro>().color);
+                values.colors.Add(anim.obj.GetComponent<SpriteRenderer>().color);
             }
 
             lastValues.Insert(0, new Value(values));
@@ -216,10 +216,11 @@ public class AnimationPlayer : MonoBehaviour
         for (int i = 0; i < anim.translations.Length; i++)
         {
             Translation t = anim.translations[i];
+            Vector2 scale = t.obj.TryGetComponent<Camera>(out _) ? cameraScale : (Vector2)t.obj.transform.localScale;
 
             values.translations.Add(t.obj == null ?
             (t.relative ? anim.obj.transform.position + (Vector3)t.vector : ((Vector3)t.vector + new Vector3(0, 0, anim.obj.transform.position.z))) :
-            (MultiplyVector((Vector3)t.vector + new Vector3(0, 0, 1), (Vector3)(Vector2)((t.obj.transform.localScale / 2f) + (anim.obj.transform.localScale / 2f * (t.relative ? -1 : 1)))
+            (MultiplyVector((Vector3)t.vector + new Vector3(0, 0, 1), (Vector3)((scale / 2f) + (scale / 2f * (t.relative ? -1 : 1)))
             + new Vector3(0, 0, anim.obj.transform.position.z)) + t.obj.transform.position));
         }
         AddToList(values.scales, ToVector3Array(anim.scales, anim.obj.transform.localScale.z));
@@ -269,12 +270,7 @@ public class AnimationPlayer : MonoBehaviour
 
             if (anim.colors.Length > 0)
             {
-                Color c = LerpBetweenClosest(values.colors, t);
-                SpriteRenderer sr;
-                if (anim.obj.TryGetComponent(out sr))
-                    sr.color = c;
-                else
-                    anim.obj.GetComponent<TextMeshPro>().color = c;
+                anim.obj.GetComponent<SpriteRenderer>().color = LerpBetweenClosest(values.colors, t);
             }
 
             if (anim.animationFloat != null)
