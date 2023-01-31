@@ -207,7 +207,8 @@ public class AnimationPlayer : MonoBehaviour
 
             values.translations.Add(t.obj == null ?
             (t.relative ? anim.obj.transform.position + (Vector3)t.vector : ((Vector3)t.vector + new Vector3(0, 0, anim.obj.transform.position.z))) :
-            MultiplyVector((Vector3)t.vector + new Vector3(0, 0, 1), (t.obj.transform.localScale / 2f) + (anim.obj.transform.localScale / 2f * (t.relative ? -1 : 1))));
+            (MultiplyVector((Vector3)t.vector + new Vector3(0, 0, 1), (Vector3)(Vector2)((t.obj.transform.localScale / 2f) + (anim.obj.transform.localScale / 2f * (t.relative ? -1 : 1)))
+            + new Vector3(0, 0, anim.obj.transform.position.z)) + t.obj.transform.position));
         }
         AddToList(values.scales, ToVector3Array(anim.scales, anim.obj.transform.localScale.z));
         AddToList(values.rotations, anim.rotations);
