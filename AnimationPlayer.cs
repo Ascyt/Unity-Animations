@@ -134,7 +134,8 @@ public class AnimationPlayer : MonoBehaviour
             rotation = GetLast(v.rotations);
             if (v.colors.Count > 0)
                 color = GetLast(v.colors);
-            animFloat = GetLast(v.animFloats);
+            if (v.animFloats.Count > 0)
+                animFloat = GetLast(v.animFloats);
         }
     }
 
